@@ -7,15 +7,15 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="layout-container">
-      {/* Top Ad Slot */}
+      {/* 상단 광고 슬롯 */}
       <div className="ad-slot ad-top glass">
-        <span className="ad-label">Advertisement</span>
-        {/* AdSense code would go here */}
+        <span className="ad-label">광고 영역</span>
+        {/* AdSense 코드가 여기에 들어갑니다 */}
       </div>
 
       <header className="main-header">
-        <h1 className="title-gradient animate-float">Image Optimizer Pro</h1>
-        <p className="text-dim">Fast, secure, and trendy image compression in your browser.</p>
+        <h1 className="title-gradient animate-float">이미지 옵티마이저 프로</h1>
+        <p className="text-dim">브라우저에서 직접 최적으로 처리되는 빠르고 안전한 이미지 압축 도구입니다.</p>
       </header>
 
       <main className="content-grid">

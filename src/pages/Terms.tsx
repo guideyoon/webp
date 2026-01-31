@@ -2,17 +2,17 @@ import React from 'react';
 
 const Terms: React.FC = () => (
     <div className="legal-page glass p-10 mt-8">
-        <h1 className="text-3xl font-bold mb-6 title-gradient">Terms of Service</h1>
-        <p className="mb-4">By using Image Optimizer Pro, you agree to the following terms.</p>
+        <h1 className="text-3xl font-bold mb-6 title-gradient">이용약관</h1>
+        <p className="mb-4">이미지 옵티마이저 프로를 이용함으로써 귀하는 다음 약관에 동의하게 됩니다.</p>
 
-        <h2 className="text-xl font-bold mt-6 mb-2">1. Acceptable Use</h2>
-        <p className="text-dim mb-4">You are free to use this tool for any personal or commercial purpose. Any attempt to disrupt the service or use it for malicious intent is prohibited.</p>
+        <h2 className="text-xl font-bold mt-6 mb-2">1. 허용된 사용</h2>
+        <p className="text-dim mb-4">귀하는 본 도구를 개인적 또는 상업적 목적으로 자유롭게 사용할 수 있습니다. 서비스 운영을 방해하거나 악의적인 용도로 사용하는 행위는 금지됩니다.</p>
 
-        <h2 className="text-xl font-bold mt-6 mb-2">2. No Warranty</h2>
-        <p className="text-dim mb-4">This tool is provided "as is" without any warranties. While we strive for the best results, we are not responsible for any data loss or quality issues resulting from the use of this software.</p>
+        <h2 className="text-xl font-bold mt-6 mb-2">2. 보증의 부인</h2>
+        <p className="text-dim mb-4">본 도구는 "있는 그대로" 제공되며 어떠한 형태의 보증도 제공하지 않습니다. 최상의 결과를 위해 노력하지만, 소프트웨어 사용으로 인해 발생하는 데이터 손실이나 품질 문제에 대해 책임을 지지 않습니다.</p>
 
-        <h2 className="text-xl font-bold mt-6 mb-2">3. Limitation of Liability</h2>
-        <p className="text-dim mb-4">In no event shall Image Optimizer Pro be liable for any damages arising out of the use or inability to use the tool.</p>
+        <h2 className="text-xl font-bold mt-6 mb-2">3. 책임의 제한</h2>
+        <p className="text-dim mb-4">이미지 옵티마이저 프로는 도구의 사용 또는 사용 불능으로 인해 발생하는 어떠한 손해에 대해서도 책임을 지지 않습니다.</p>
     </div>
 );
 

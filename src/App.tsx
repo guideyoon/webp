@@ -104,72 +104,72 @@ const App: React.FC = () => {
     return (
       <>
         <div className="app-grid">
-          {/* Upload Section */}
+          {/* 업로드 섹션 */}
           <section className="glass p-6 flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
               <Upload size={20} className="text-secondary" />
-              <h2 className="text-xl font-bold">Upload Images</h2>
+              <h2 className="text-xl font-bold">이미지 업로드</h2>
             </div>
             <label className="upload-dropzone">
               <input type="file" multiple accept="image/*" onChange={handleFileUpload} hidden />
               <div className="flex flex-col items-center gap-2">
                 <Upload size={48} className="text-dim opacity-50" />
-                <p>Drag & drop or <span className="text-secondary font-semibold">Browse</span></p>
-                <p className="text-xs text-dim">Supports JPG, PNG, WebP, AVIF</p>
+                <p>파일을 여기로 끌어다 놓거나 <span className="text-secondary font-semibold">찾아보기</span></p>
+                <p className="text-xs text-dim">JPG, PNG, WebP, AVIF 지원</p>
               </div>
             </label>
           </section>
 
-          {/* Settings Section */}
+          {/* 설정 섹션 */}
           <section className="glass p-6">
             <div className="flex items-center gap-2 mb-4">
               <Settings size={20} className="text-secondary" />
-              <h2 className="text-xl font-bold">Optimization Settings</h2>
+              <h2 className="text-xl font-bold">최적화 설정</h2>
             </div>
             <div className="flex flex-col gap-4">
               <div className="setting-item">
-                <label>Quality ({quality}%)</label>
+                <label>압축 품질 ({quality}%)</label>
                 <input
                   type="range" min="10" max="100" value={quality}
                   onChange={(e) => setQuality(Number(e.target.value))}
                 />
               </div>
               <div className="setting-item">
-                <label>Max Long Edge (px)</label>
+                <label>최대 긴 변 크기 (px)</label>
                 <input
                   type="number" value={maxSize}
                   onChange={(e) => setMaxSize(Number(e.target.value))}
-                  placeholder="0 for original size"
+                  placeholder="0 입력 시 원본 크기 유지"
                 />
               </div>
               <div className="setting-item">
-                <label>Format</label>
+                <label>대상 형식</label>
                 <select value={format} onChange={(e) => setFormat(e.target.value)}>
-                  <option value="webp">WebP (Optimized)</option>
+                  <option value="webp">WebP (최적화 권장)</option>
                   <option value="jpg">JPEG</option>
                 </select>
               </div>
               <div className="setting-item">
-                <label>Batch naming (Start Number)</label>
+                <label>일괄 명명 (시작 번호)</label>
                 <input
                   type="text" value={batchRange}
                   onChange={(e) => setBatchRange(e.target.value)}
-                  placeholder="e.g. 10"
+                  placeholder="예: 10"
                 />
               </div>
             </div>
           </section>
 
-          {/* Results Section */}
+          {/* 결과 섹션 */}
           <section className="col-span-full">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <CheckCircle size={20} className="text-accent" />
-                <h2 className="text-xl font-bold">Results ({images.length})</h2>
+                <h2 className="text-xl font-bold">처리 결과 ({images.length})</h2>
               </div>
               {images.length > 0 && (
                 <button className="btn-primary" onClick={downloadAll}>
-                  <Download size={18} /> Download All
+                  <Download size={18} /> 전체 다운로드
                 </button>
               )}
             </div>
@@ -191,12 +191,12 @@ const App: React.FC = () => {
                         {img.origDim} → {img.newDim} |
                         {(img.newSize / 1024).toFixed(1)} KB (
                         <span className="text-accent">
-                          -{Math.round((1 - img.newSize / img.origSize) * 100)}%
+                          -{Math.round((1 - img.newSize / img.origSize) * 100)}% 절감
                         </span>)
                       </p>
                     </div>
                     <div className="result-actions">
-                      <button onClick={() => downloadPair(img)} title="Download as Left/Right Pair">
+                      <button onClick={() => downloadPair(img)} title="좌/우 쌍으로 다운로드">
                         <Download size={18} />
                       </button>
                       <button onClick={() => removeImage(img.id)} className="text-red-400">
@@ -209,20 +209,20 @@ const App: React.FC = () => {
               {images.length === 0 && !isProcessing && (
                 <div className="text-center p-12 glass opacity-50">
                   <ImageIcon size={48} className="mx-auto mb-2" />
-                  <p>No images processed yet.</p>
+                  <p>처리된 이미지가 없습니다.</p>
                 </div>
               )}
               {isProcessing && (
                 <div className="text-center p-12">
                   <div className="spinner mx-auto mb-2"></div>
-                  <p>Optimizing...</p>
+                  <p>최적화 진행 중...</p>
                 </div>
               )}
             </div>
           </section>
         </div>
 
-        {/* New SEO Rich Content Sections */}
+        {/* SEO 정보 섹션 */}
         <GuideSection />
         <FeaturesSection />
         <FAQSection />
