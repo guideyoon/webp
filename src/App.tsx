@@ -242,7 +242,10 @@ const App: React.FC = () => {
         }
 
         @media (max-width: 768px) {
-          .app-grid { grid-template-columns: 1fr; }
+          .app-grid { 
+            grid-template-columns: 1fr; 
+            gap: 1.5rem;
+          }
         }
 
         .col-span-full { grid-column: 1 / -1; }
@@ -268,7 +271,7 @@ const App: React.FC = () => {
         .upload-dropzone {
           border: 2px dashed var(--glass-border);
           border-radius: var(--card-radius);
-          padding: 3rem;
+          padding: clamp(1.5rem, 5vw, 3rem);
           text-align: center;
           cursor: pointer;
           transition: all 0.3s ease;

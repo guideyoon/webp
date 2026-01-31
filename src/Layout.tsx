@@ -64,8 +64,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         }
 
         .main-header h1 {
-          font-size: 3.5rem;
+          font-size: clamp(2.5rem, 8vw, 3.5rem);
           margin-bottom: 0.5rem;
+          line-height: 1.1;
         }
 
         .content-grid {

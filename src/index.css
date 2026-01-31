@@ -20,12 +20,27 @@
 body {
   font-family: var(--font-inter);
   background-color: var(--bg-dark);
-  background-image: 
+  background-image:
     radial-gradient(circle at 0% 0%, rgba(157, 80, 187, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(110, 72, 170, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 100% 100%, rgba(110, 72, 170, 0.15) 0% (transparent 50%));
   color: var(--text-main);
   min-height: 100vh;
   overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
 }
 
 .glass {
@@ -49,22 +64,79 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 2.5rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  gap: 2rem;
 }
 
+/* Mobile specific improvements */
 @media (max-width: 768px) {
+  :root {
+    --card-radius: 16px;
+  }
+
+  body {
+    font-size: 16px;
+    /* Base font size for readability */
+  }
+
+  h1 {
+    font-size: 2.25rem !important;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.4rem;
+  }
+
   #root {
-    padding: 1rem;
+    padding: 1.5rem 0.75rem;
+    gap: 1.5rem;
+  }
+
+  .glass {
+    padding: 1.25rem !important;
+    /* Smaller but efficient padding on mobile */
+  }
+
+  .info-card {
+    padding: 1.5rem 1rem !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem !important;
+  }
+
+  .glass {
+    padding: 1rem !important;
+  }
+
+  .text-dim {
+    color: #cbd5e1;
+    /* Increased contrast for dimmed text on mobile */
   }
 }
 
 /* Animations */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .animate-float {
