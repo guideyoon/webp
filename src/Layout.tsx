@@ -15,7 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       <header className="main-header">
         <h1 className="title-gradient animate-float">이미지 옵티마이저 프로</h1>
-        <p className="text-dim">브라우저에서 직접 최적으로 처리되는 빠르고 안전한 이미지 압축 도구입니다.</p>
+        <p className="text-dim">브라우저에서 직접 처리되는 빠르고 안전한 이미지 압축 도구입니다.</p>
       </header>
 
       <main className="content-grid">
@@ -23,30 +23,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </div>
 
-        {/* Sidebar Ad Slot */}
+        {/* 사이드바 광고 슬롯 */}
         <aside className="ad-slot ad-sidebar glass">
-          <span className="ad-label">Advertisement</span>
-          {/* AdSense code would go here */}
+          <span className="ad-label">광고 영역</span>
+          {/* AdSense 코드가 여기에 들어갑니다 */}
         </aside>
       </main>
 
       <footer className="main-footer glass p-6">
         <div className="flex justify-between items-center gap-4">
           <div className="footer-info">
-            <p className="text-sm font-semibold title-gradient">Image Optimizer Pro</p>
+            <p className="text-sm font-semibold title-gradient">이미지 옵티마이저 프로</p>
             <p className="text-xs text-dim">© 2026. All rights reserved.</p>
           </div>
           <nav className="footer-links flex gap-6 text-xs font-medium">
-            <a href="/" className="hover:text-accent transition-colors">Home</a>
-            <a href="/privacy" className="hover:text-accent transition-colors">Privacy Policy</a>
-            <a href="/terms" className="hover:text-accent transition-colors">Terms of Service</a>
+            <a href="/" className="hover:text-accent transition-colors">홈</a>
+            <a href="/privacy" className="hover:text-accent transition-colors">개인정보처리방침</a>
+            <a href="/terms" className="hover:text-accent transition-colors">이용약관</a>
           </nav>
         </div>
 
-        {/* Bottom Ad Slot */}
+        {/* 하단 광고 슬롯 */}
         <div className="ad-slot ad-bottom mt-6">
-          <span className="ad-label">Advertisement</span>
-          {/* AdSense code would go here */}
+          <span className="ad-label">광고 영역</span>
+          {/* AdSense 코드가 여기에 들어갑니다 */}
         </div>
       </footer>
 
