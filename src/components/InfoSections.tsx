@@ -46,22 +46,28 @@ export const FAQSection: React.FC = () => (
 export const GuideSection: React.FC = () => (
     <section className="py-16">
         <h2 className="text-3xl font-bold mb-12 title-gradient text-center">사용 방법 안내</h2>
-        <div className="max-w-2xl mx-auto">
-            <ul className="relative border-l-2 border-gray-200 ml-4 space-y-10 list-none">
-                <li className="ml-8 relative">
-                    <span className="absolute -left-11 flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-bold text-sm">1</span>
-                    <h3 className="font-bold text-lg mb-2">이미지 업로드</h3>
-                    <p className="text-dim">최적화할 이미지를 상단 영역에 드래그 앤 드롭 하세요.</p>
+        <div className="max-w-xl mx-auto">
+            <ul className="space-y-12 list-none p-0">
+                <li className="flex gap-6 items-start">
+                    <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-lg shadow-sm">1</span>
+                    <div>
+                        <h3 className="font-bold text-xl mb-1 text-main">이미지 업로드</h3>
+                        <p className="text-dim leading-relaxed">최적화할 이미지를 상단 영역에 드래그 앤 드롭 하세요.</p>
+                    </div>
                 </li>
-                <li className="ml-8 relative">
-                    <span className="absolute -left-11 flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-bold text-sm">2</span>
-                    <h3 className="font-bold text-lg mb-2">설정 조절</h3>
-                    <p className="text-dim">품질 슬라이더와 최대 크기(해상도)를 원하는 대로 조절합니다.</p>
+                <li className="flex gap-6 items-start">
+                    <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-lg shadow-sm">2</span>
+                    <div>
+                        <h3 className="font-bold text-xl mb-1 text-main">설정 조절</h3>
+                        <p className="text-dim leading-relaxed">품질 슬라이더와 최대 크기(해상도)를 원하는 대로 조절합니다.</p>
+                    </div>
                 </li>
-                <li className="ml-8 relative">
-                    <span className="absolute -left-11 flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-bold text-sm">3</span>
-                    <h3 className="font-bold text-lg mb-2">변환 및 다운로드</h3>
-                    <p className="text-dim">출력 형식을 선택하고 변환된 파일을 다운로드 받으세요.</p>
+                <li className="flex gap-6 items-start">
+                    <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-lg shadow-sm">3</span>
+                    <div>
+                        <h3 className="font-bold text-xl mb-1 text-main">변환 및 다운로드</h3>
+                        <p className="text-dim leading-relaxed">출력 형식을 선택하고 변환된 파일을 다운로드 받으세요.</p>
+                    </div>
                 </li>
             </ul>
         </div>
