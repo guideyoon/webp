@@ -2,230 +2,282 @@ import React, { useState } from 'react';
 import Layout from './Layout';
 import { useImageOptimizer } from './utils/optimizer';
 import type { OptimizedImage } from './utils/optimizer';
-import { Upload, Settings, Download, X, Image as ImageIcon, CheckCircle } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import JSZip from 'jszip';
 
 import { FeaturesSection, FAQSection, GuideSection } from './components/InfoSections';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 
+interface PendingFile {
+  file: File;
+  preview: string;
+}
+
 const App: React.FC = () => {
   const { optimize, isProcessing } = useImageOptimizer();
   const [images, setImages] = useState<OptimizedImage[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [quality, setQuality] = useState(80);
   const [maxSize, setMaxSize] = useState(1600);
-  const [format, setFormat] = useState('webp');
-  const [batchRange, setBatchRange] = useState('');
+  const [format, setFormat] = useState('jpg');
 
-  // Simple state-based routing
-  const [path, setPath] = useState(window.location.pathname);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      const newPending = files.map(file => ({
+        file,
+        preview: URL.createObjectURL(file)
+      }));
+      setPendingFiles(prev => [...prev, ...newPending]);
+      e.target.value = '';
+    }
+  };
 
-  // Sync state with browser navigation (simple version)
-  React.useEffect(() => {
-    const handleLocationChange = () => setPath(window.location.pathname);
-    window.addEventListener('popstate', handleLocationChange);
+  const startConversion = async () => {
+    if (pendingFiles.length === 0) return;
 
-    // Intercept link clicks
-    const handleLinkClick = (e: MouseEvent) => {
-      const target = e.target as HTMLAnchorElement;
-      if (target.tagName === 'A' && target.origin === window.location.origin) {
-        e.preventDefault();
-        window.history.pushState({}, '', target.pathname);
-        setPath(target.pathname);
-        window.scrollTo(0, 0);
-      }
-    };
-    document.addEventListener('click', handleLinkClick);
+    const newOptimizedImages: OptimizedImage[] = [];
 
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-      document.removeEventListener('click', handleLinkClick);
-    };
-  }, []);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    const results: OptimizedImage[] = [];
-    for (const file of files) {
+    for (const item of pendingFiles) {
       try {
-        const result = await optimize(file, { quality, maxWidthOrHeight: maxSize, format });
-        results.push(result);
-      } catch (err) {
-        console.error(err);
+        const result = await optimize(item.file, {
+          quality: quality,
+          maxWidthOrHeight: maxSize,
+          format: format
+        });
+        newOptimizedImages.push(result);
+        // Clean up preview URL
+        URL.revokeObjectURL(item.preview);
+      } catch (error) {
+        console.error("Error optimizing file", item.file.name, error);
       }
     }
-    setImages(prev => [...prev, ...results]);
-    if (results.length > 0) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#9d50bb', '#6e48aa', '#00f2fe']
-      });
+
+    setImages(prev => [...prev, ...newOptimizedImages]);
+    setPendingFiles([]);
+
+    if (newOptimizedImages.length > 0) {
+      confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
     }
   };
 
   const removeImage = (id: string) => {
-    setImages(prev => prev.filter(img => img.id !== id));
+    setImages(images.filter(img => img.id !== id));
+  };
+
+  const removePendingFile = (index: number) => {
+    const item = pendingFiles[index];
+    URL.revokeObjectURL(item.preview);
+    setPendingFiles(pendingFiles.filter((_, i) => i !== index));
   };
 
   const downloadAll = async () => {
-    // Basic implementation: trigger clicks for all
-    // For a real production app, we'd use JSZip, but keeping it simple as requested
-    for (const img of images) {
-      const link = document.createElement('a');
-      link.href = img.dataUrl;
-      link.download = img.name;
-      link.click();
-    }
+    if (images.length === 0) return;
+    const zip = new JSZip();
+    images.forEach((img) => {
+      const data = img.dataUrl.split(',')[1];
+      zip.file(img.name, data, { base64: true });
+    });
+    const content = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content);
+    link.download = 'converted_images.zip';
+    link.click();
   };
 
   const downloadPair = (img: OptimizedImage) => {
-    // Specific naming convention: l{num}_left.webp / l{num}_right.webp
-    const num = batchRange || '10';
-    const leftName = `l${num}_left.webp`;
-    const rightName = `l${num}_right.webp`;
+    const link = document.createElement('a');
+    link.href = img.dataUrl;
+    link.download = img.name;
+    link.click();
+  };
 
-    [leftName, rightName].forEach(name => {
-      const link = document.createElement('a');
-      link.href = img.dataUrl;
-      link.download = name;
-      link.click();
-    });
+  const resetAll = () => {
+    images.forEach(img => URL.revokeObjectURL(img.dataUrl));
+    pendingFiles.forEach(item => URL.revokeObjectURL(item.preview));
+    setImages([]);
+    setPendingFiles([]);
+    setQuality(80);
+    setMaxSize(1600);
+    setFormat('jpg');
+  };
+
+  const formatSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
   const renderContent = () => {
+    const path = window.location.pathname;
+
     if (path === '/privacy') return <PrivacyPolicy />;
     if (path === '/terms') return <Terms />;
 
     return (
       <>
-        <div className="app-grid">
-          {/* 업로드 섹션 */}
-          <section className="glass p-6 flex flex-col gap-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Upload size={20} className="text-secondary" />
-              <h2 className="text-xl font-bold">이미지 업로드</h2>
-            </div>
-            <label className="upload-dropzone">
-              <input type="file" multiple accept="image/*" onChange={handleFileUpload} hidden />
-              <div className="flex flex-col items-center gap-2">
-                <Upload size={48} className="text-dim opacity-50" />
-                <p>파일을 여기로 끌어다 놓거나 <span className="text-secondary font-semibold">찾아보기</span></p>
-                <p className="text-xs text-dim">JPG, PNG, WebP, AVIF 지원</p>
+        <div className="tool-container">
+          {/* 1. Upload Box */}
+          <div className={`upload-box ${isProcessing ? 'processing' : ''}`}>
+            <label className="upload-label">
+              <input type="file" multiple accept="image/webp,image/png,image/jpeg" onChange={handleFileUpload} hidden disabled={isProcessing} />
+              <div className="upload-content">
+                <div className="cloud-icon">{isProcessing ? '⏳' : '☁️'}</div>
+                <p className="upload-text">{isProcessing ? '변환 중입니다...' : '파일을 끌어다 놓거나 클릭하여 선택하세요'}</p>
+                <p className="upload-subtext">{isProcessing ? '잠시만 기다려주세요.' : 'WebP, PNG, JPG (최대 10MB)'}</p>
               </div>
             </label>
-          </section>
+          </div>
+          <p className="small-note">Ctrl 또는 Shift 키를 누른 상태로 여러 파일을 선택할 수 있습니다.</p>
 
-          {/* 설정 섹션 */}
-          <section className="glass p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Settings size={20} className="text-secondary" />
-              <h2 className="text-xl font-bold">최적화 설정</h2>
+          {/* 2. Options */}
+          <div className="options-area">
+            <div className="option-row">
+              <label>변환 형식:</label>
+              <select value={format} onChange={(e) => setFormat(e.target.value)} className="format-select">
+                <option value="jpg">JPG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+              </select>
             </div>
-            <div className="flex flex-col gap-4">
-              <div className="setting-item">
-                <label>압축 품질 ({quality}%)</label>
-                <input
-                  type="range" min="10" max="100" value={quality}
-                  onChange={(e) => setQuality(Number(e.target.value))}
-                />
-              </div>
-              <div className="setting-item">
-                <label>최대 긴 변 크기 (px)</label>
-                <input
-                  type="number" value={maxSize}
-                  onChange={(e) => setMaxSize(Number(e.target.value))}
-                  placeholder="0 입력 시 원본 크기 유지"
-                />
-              </div>
-              <div className="setting-item">
-                <label>대상 형식</label>
-                <select value={format} onChange={(e) => setFormat(e.target.value)}>
-                  <option value="webp">WebP (최적화 권장)</option>
-                  <option value="jpg">JPEG</option>
-                </select>
-              </div>
-              <div className="setting-item">
-                <label>일괄 명명 (시작 번호)</label>
-                <input
-                  type="text" value={batchRange}
-                  onChange={(e) => setBatchRange(e.target.value)}
-                  placeholder="예: 10"
-                />
-              </div>
+            <div className="option-row">
+              <label>품질 ({quality}%)</label>
+              <input
+                type="range" min="10" max="100" value={quality}
+                onChange={(e) => setQuality(Number(e.target.value))}
+                className="quality-range"
+              />
             </div>
-          </section>
+            <div className="option-row">
+              <label>최대 크기 (px)</label>
+              <input
+                type="number" value={maxSize}
+                onChange={(e) => setMaxSize(Number(e.target.value))}
+                className="format-select"
+              />
+            </div>
+          </div>
 
-          {/* 결과 섹션 */}
-          <section className="col-span-full">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle size={20} className="text-accent" />
-                <h2 className="text-xl font-bold">처리 결과 ({images.length})</h2>
+          {/* Pending Files List */}
+          {pendingFiles.length > 0 && !isProcessing && (
+            <div className="mb-10">
+              <div className="list-title-container">
+                <h3 className="list-title">
+                  <span className="dot indigo"></span>
+                  변환 대기 목록 ({pendingFiles.length})
+                </h3>
               </div>
-              {images.length > 0 && (
-                <button className="btn-primary" onClick={downloadAll}>
-                  <Download size={18} /> 전체 다운로드
-                </button>
-              )}
-            </div>
-
-            <div className="results-list">
-              <AnimatePresence>
-                {images.map((img) => (
+              <div className="card-list">
+                {pendingFiles.map((item, i) => (
                   <motion.div
-                    key={img.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="result-card glass"
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="list-card"
                   >
-                    <img src={img.dataUrl} alt={img.name} className="result-thumb" />
-                    <div className="result-info">
-                      <p className="font-semibold truncate">{img.name}</p>
-                      <p className="text-xs text-dim">
-                        {img.origDim} → {img.newDim} |
-                        {(img.newSize / 1024).toFixed(1)} KB (
-                        <span className="text-accent">
-                          -{Math.round((1 - img.newSize / img.origSize) * 100)}% 절감
-                        </span>)
-                      </p>
+                    <div className="card-left">
+                      <div className="card-thumb">
+                        <img src={item.preview} className="thumb-img" alt="" />
+                      </div>
+                      <div className="card-info">
+                        <p className="card-name">{item.file.name}</p>
+                        <div className="card-meta">
+                          <span className="badge-type">{item.file.name.split('.').pop()?.toUpperCase()}</span>
+                          <span className="card-size-label">{formatSize(item.file.size)}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="result-actions">
-                      <button onClick={() => downloadPair(img)} title="좌/우 쌍으로 다운로드">
-                        <Download size={18} />
-                      </button>
-                      <button onClick={() => removeImage(img.id)} className="text-red-400">
-                        <X size={18} />
-                      </button>
-                    </div>
+                    <button onClick={() => removePendingFile(i)} className="btn-icon-gray">
+                      <Trash2 size={16} />
+                    </button>
                   </motion.div>
                 ))}
-              </AnimatePresence>
-              {images.length === 0 && !isProcessing && (
-                <div className="text-center p-12 glass opacity-50">
-                  <ImageIcon size={48} className="mx-auto mb-2" />
-                  <p>처리된 이미지가 없습니다.</p>
-                </div>
-              )}
-              {isProcessing && (
-                <div className="text-center p-12">
-                  <div className="spinner mx-auto mb-2"></div>
-                  <p>최적화 진행 중...</p>
-                </div>
-              )}
+              </div>
+              <div className="mt-6">
+                <button onClick={startConversion} className="btn-convert-now">
+                  🚀 지금 바로 변환하기
+                </button>
+              </div>
             </div>
-          </section>
+          )}
+
+          {/* Loading State */}
+          {isProcessing && (
+            <div className="loading-container">
+              <div className="loading-spinner-box">
+                <div className="spinner"></div>
+                <div className="spinner-center">⏳</div>
+              </div>
+              <h3 className="loading-title">이미지를 최적화하고 있어요</h3>
+              <p className="loading-sub">로컬에서 안전하게 변환 중입니다. 잠시만 기다려주세요!</p>
+            </div>
+          )}
+
+          {/* 3. Results */}
+          {images.length > 0 && (
+            <div className="results-wrapper">
+              <div className="results-header">
+                <h3 className="list-title">
+                  <span className="dot green"></span>
+                  변환 완료 ({images.length})
+                </h3>
+                <div className="results-actions">
+                  <button onClick={resetAll} className="btn-reset">초기화</button>
+                  <button onClick={downloadAll} className="btn-save-all">전체 저장</button>
+                </div>
+              </div>
+              <div className="card-list">
+                <AnimatePresence>
+                  {images.map((img) => (
+                    <motion.div
+                      key={img.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="list-card"
+                    >
+                      <div className="card-left">
+                        <div className="card-thumb">
+                          <img src={img.dataUrl} className="thumb-img" alt="" />
+                        </div>
+                        <div className="card-info">
+                          <div className="name-with-badge">
+                            <span className="card-name">{img.name}</span>
+                            <span className="badge-saving">-{Math.round(((img.origSize - img.newSize) / img.origSize) * 100)}%</span>
+                          </div>
+                          <div className="card-size-compare">
+                            <span className="size-old">{formatSize(img.origSize)}</span>
+                            <span className="size-arrow">→</span>
+                            <span className="size-new">{formatSize(img.newSize)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="card-actions">
+                        <button onClick={() => downloadPair(img)} className="btn-icon-indigo">
+                          <Download size={16} />
+                        </button>
+                        <button onClick={() => removeImage(img.id)} className="btn-icon-gray">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* SEO 정보 섹션 */}
-        <GuideSection />
-        <FeaturesSection />
-        <FAQSection />
+        <div className="info-area">
+          <GuideSection />
+          <FeaturesSection />
+          <FAQSection />
+        </div>
       </>
     );
   };
@@ -235,152 +287,125 @@ const App: React.FC = () => {
       {renderContent()}
 
       <style>{`
-        .app-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
+        .tool-container {
+            background: #fff;
+            padding: 0;
+            margin-bottom: 4rem;
         }
+        .tool-header {
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .tool-desc {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .upload-box {
+            background-color: #f8fafc;
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 3rem 1rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        .upload-box:hover {
+            border-color: #6366f1;
+            background-color: #e0e7ff;
+        }
+        .upload-box.processing {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .cloud-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.8; }
+        .upload-text { font-weight: 700; color: #1e293b; margin-bottom: 0.25rem; }
+        .upload-subtext { font-size: 0.8rem; color: #64748b; }
+        .small-note { font-size: 0.75rem; color: #94a3b8; margin-bottom: 2rem; text-align: center; }
 
-        @media (max-width: 768px) {
-          .app-grid { 
-            grid-template-columns: 1fr; 
+        .options-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 1.5rem;
-          }
+            margin-bottom: 2rem;
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
         }
+        @media (max-width: 640px) { .options-area { grid-template-columns: 1fr; } }
+        .option-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color: #475569; }
+        .format-select { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; }
+        .quality-range { width: 100%; height: 6px; appearance: none; background: #e2e8f0; border-radius: 999px; outline: none; }
+        .quality-range::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; background: #6366f1; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        .col-span-full { grid-column: 1 / -1; }
+        .list-title-container { margin-bottom: 1rem; padding: 0 0.5rem; }
+        .list-title { display: flex; align-items: center; gap: 0.75rem; font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+        .dot { width: 8px; height: 24px; border-radius: 999px; }
+        .dot.indigo { background: #6366f1; }
+        .dot.green { background: #22c55e; }
 
-        .p-6 { padding: 1.5rem; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-4 { gap: 1rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .text-xl { font-size: 1.25rem; }
-        .font-bold { font-weight: 700; }
-        .font-semibold { font-weight: 600; }
-        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .text-xs { font-size: 0.75rem; }
-        .text-dim { color: var(--text-dim); }
-        .text-accent { color: var(--accent); }
-        .text-secondary { color: var(--secondary); }
-
-        .upload-dropzone {
-          border: 2px dashed var(--glass-border);
-          border-radius: var(--card-radius);
-          padding: clamp(1.5rem, 5vw, 3rem);
-          text-align: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
+        .card-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .list-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 0.75rem;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s;
         }
+        .list-card:hover { border-color: #6366f1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .card-left { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+        .card-thumb { width: 40px; height: 40px; border-radius: 10px; background: #f8fafc; border: 1px solid #f1f5f9; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
+        .card-info { flex: 1; min-width: 0; }
+        .card-name { font-size: 0.85rem; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 2px; }
+        .badge-type { font-size: 9px; font-weight: 800; color: #6366f1; background: #eef2ff; padding: 1px 4px; border-radius: 4px; }
+        .card-size-label { font-size: 11px; color: #94a3b8; }
 
-        .upload-dropzone:hover {
-          background: rgba(255,255,255,0.05);
-          border-color: var(--secondary);
+        .btn-convert-now {
+            width: 100%; padding: 1rem; border-radius: 16px; background: #6366f1; color: #fff; font-size: 1.1rem; font-weight: 800; 
+            border: none; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2); transition: all 0.2s; 
         }
+        .btn-convert-now:hover { background: #4f46e5; transform: translateY(-1px); }
+        .btn-convert-now:active { transform: translateY(0); }
 
-        .setting-item {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
+        .loading-container { padding: 3rem 0; text-align: center; background: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 24px; margin-bottom: 2.5rem; }
+        .loading-spinner-box { position: relative; display: inline-block; margin-bottom: 1.5rem; }
+        .spinner { width: 64px; height: 64px; border: 4px solid #e2e8f0; border-top-color: #6366f1; border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-title { font-size: 1.25rem; font-weight: 900; color: #1e293b; margin-bottom: 0.5rem; }
+        .loading-sub { color: #64748b; font-size: 0.95rem; }
 
-        .setting-item label {
-          font-size: 0.9rem;
-          font-weight: 500;
-        }
+        .results-wrapper { margin-top: 2.5rem; border-top: 1px solid #f1f5f9; padding-top: 2.5rem; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0 0.5rem; }
+        .results-actions { display: flex; gap: 0.75rem; }
+        .btn-reset { padding: 0.5rem 1rem; border-radius: 10px; border: 1px solid #e2e8f0; color: #64748b; font-size: 0.85rem; font-weight: 700; background: #fff; cursor: pointer; }
+        .btn-reset:hover { color: #ef4444; border-color: #fee2e2; background: #fff1f2; }
+        .btn-save-all { padding: 0.5rem 1.25rem; border-radius: 10px; background: #6366f1; color: #fff; font-size: 0.85rem; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2); }
+        .btn-save-all:hover { background: #4f46e5; }
 
-        .setting-item input[type="range"] {
-          accent-color: var(--primary);
-        }
+        .name-with-badge { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2px; }
+        .badge-saving { font-size: 9px; font-weight: 900; color: #15803d; background: #dcfce7; padding: 1px 6px; border-radius: 999px; }
+        .card-size-compare { display: flex; align-items: center; gap: 0.5rem; }
+        .size-old { font-size: 10px; color: #94a3b8; text-decoration: line-through; }
+        .size-arrow { font-size: 10px; color: #cbd5e1; }
+        .size-new { font-size: 11px; font-weight: 800; color: #6366f1; }
 
-        .setting-item input[type="number"],
-        .setting-item input[type="text"],
-        .setting-item select {
-          padding: 0.6rem;
-          border-radius: 8px;
-          background: rgba(0,0,0,0.2);
-          border: 1px solid var(--glass-border);
-          color: white;
-          outline: none;
-        }
+        .card-actions { display: flex; gap: 0.5rem; }
+        .btn-icon-gray { width: 32px; height: 32px; border-radius: 8px; border: none; background: #f8fafc; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .btn-icon-gray:hover { background: #fee2e2; color: #ef4444; }
+        .btn-icon-indigo { width: 32px; height: 32px; border-radius: 8px; border: none; background: #eef2ff; color: #6366f1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .btn-icon-indigo:hover { background: #6366f1; color: #fff; }
 
-        .btn-primary {
-          background: linear-gradient(135deg, var(--primary), var(--secondary));
-          color: white;
-          padding: 0.6rem 1.2rem;
-          border-radius: 12px;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          border: none;
-          cursor: pointer;
-          transition: transform 0.2s;
-        }
-
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          filter: brightness(1.1);
-        }
-
-        .results-list {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .result-card {
-          display: flex;
-          align-items: center;
-          gap: 1.5rem;
-          padding: 1rem;
-        }
-
-        .result-thumb {
-          width: 60px;
-          height: 60px;
-          object-fit: cover;
-          border-radius: 12px;
-        }
-
-        .result-info {
-          flex: 1;
-        }
-
-        .result-actions {
-          display: flex;
-          gap: 1rem;
-        }
-
-        .result-actions button {
-          background: none;
-          border: none;
-          color: white;
-          cursor: pointer;
-          opacity: 0.6;
-          transition: opacity 0.2s;
-        }
-
-        .result-actions button:hover {
-          opacity: 1;
-        }
-
-        .spinner {
-          width: 30px;
-          height: 30px;
-          border: 3px solid rgba(255,255,255,0.1);
-          border-top-color: var(--accent);
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
+        .info-area { display: flex; flex-direction: column; gap: 2rem; }
       `}</style>
     </Layout>
   );

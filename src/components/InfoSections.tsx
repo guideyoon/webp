@@ -1,75 +1,52 @@
 import React from 'react';
 
 export const FeaturesSection: React.FC = () => (
-    <section className="py-16 border-b border-gray-100">
-        <h2 className="text-3xl font-bold mb-12 title-gradient text-center">이미지 옵티마이저 프로의 주요 기능</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="feature text-center">
-                <div className="mb-5 text-5xl">🚀</div>
-                <h3 className="font-bold text-xl mb-4">빠른 WebP 패키징</h3>
-                <p className="text-dim leading-relaxed">기존의 JPG, PNG 이미지를 최신 WebP 형식으로 즉시 변환합니다. 화질 저하 없이 파일 크기를 획기적으로 줄여보세요.</p>
-            </div>
-            <div className="feature text-center">
-                <div className="mb-5 text-5xl">🔒</div>
-                <h3 className="font-bold text-xl mb-4">프라이버시 우선</h3>
-                <p className="text-dim leading-relaxed">사용자의 이미지는 서버로 전송되지 않습니다. 모든 처리는 브라우저 내에서 로컬로 진행되어 보안과 개인정보를 완벽하게 보호합니다.</p>
-            </div>
-            <div className="feature text-center">
-                <div className="mb-5 text-5xl">⚡</div>
-                <h3 className="font-bold text-xl mb-4">대량 최적화</h3>
-                <p className="text-dim leading-relaxed">수백 장의 이미지도 한 번에 업로드하세요. 병합 및 병렬 처리를 통해 시간을 크게 절약해 드립니다.</p>
-            </div>
+    <section className="info-section">
+        <h2 className="section-title">주요 기능</h2>
+        <div className="feature-list">
+            {[
+                "100% 브라우저 기반 처리 (서버 전송 X)",
+                "여러 파일 동시 변환 지원",
+                "고화질 JPG 및 PNG 출력",
+                "무료로 사용 가능",
+                "ZIP 파일로 일괄 다운로드",
+                "모든 기기 및 브라우저 지원"
+            ].map((feature, i) => (
+                <div key={i} className="feature-item">
+                    <span className="check-icon">✓</span>
+                    <span className="feature-text">{feature}</span>
+                </div>
+            ))}
         </div>
     </section>
 );
 
 export const FAQSection: React.FC = () => (
-    <section className="py-16 border-b border-gray-100">
-        <h2 className="text-3xl font-bold mb-12 title-gradient text-center">자주 묻는 질문 (FAQ)</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 max-w-4xl mx-auto">
-            <div className="faq-item">
-                <h4 className="font-bold text-lg mb-3">왜 JPEG 대신 WebP를 사용해야 하나요?</h4>
-                <p className="text-dim leading-relaxed">WebP는 JPEG보다 파일 크기가 약 25~35% 더 작습니다. 이미지 크기가 작아지면 웹사이트 로딩 속도가 빨라지고 SEO 성능이 향상됩니다.</p>
-            </div>
-            <div className="faq-item">
-                <h4 className="font-bold text-lg mb-3">상업적 용도로 무료 사용이 가능한가요?</h4>
-                <p className="text-dim leading-relaxed">네, 이미지 옵티마이저 프로는 개인 및 상업적 프로젝트 모두에서 횟수 제한 없이 완전 무료로 사용할 수 있습니다.</p>
-            </div>
-            <div className="faq-item">
-                <h4 className="font-bold text-lg mb-3">모바일 기기에서도 작동하나요?</h4>
-                <p className="text-dim leading-relaxed">네, 반응형 인터페이스를 지원하여 스마트폰과 태블릿에서도 원활하게 작동합니다.</p>
-            </div>
+    <section className="info-section">
+        <h2 className="section-title">자주 묻는 질문(FAQ)</h2>
+        <div className="faq-list">
+            {[
+                { q: "WebP(Web Picture)란 무엇인가요?", a: "WebP는 구글이 개발한 이미지 형식으로, 웹 이미지의 파일 크기를 줄이는 동시에 높은 품질을 유지하도록 설계되었습니다." },
+                { q: "변환 형식을 어떻게 선택하나요?", a: "사진이나 복잡한 그라디언트가 있는 이미지는 JPG를, 투명 배경이나 텍스트/선이 많은 이미지는 PNG를 추천합니다." },
+                { q: "개인정보는 안전한가요?", a: "네, 모든 처리는 사용자의 브라우저 내부에서만 이루어지며 서버로 전송되지 않습니다." }
+            ].map((item, i) => (
+                <div key={i} className="faq-item">
+                    <h3 className="faq-question">{item.q}</h3>
+                    <p className="faq-answer">{item.a}</p>
+                </div>
+            ))}
         </div>
     </section>
 );
 
 export const GuideSection: React.FC = () => (
-    <section className="py-16">
-        <h2 className="text-3xl font-bold mb-12 title-gradient text-center">사용 방법 안내</h2>
-        <div className="max-w-xl mx-auto">
-            <ul className="space-y-12 list-none p-0">
-                <li className="flex gap-6 items-start">
-                    <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-lg shadow-sm">1</span>
-                    <div>
-                        <h3 className="font-bold text-xl mb-1 text-main">이미지 업로드</h3>
-                        <p className="text-dim leading-relaxed">최적화할 이미지를 상단 영역에 드래그 앤 드롭 하세요.</p>
-                    </div>
-                </li>
-                <li className="flex gap-6 items-start">
-                    <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-lg shadow-sm">2</span>
-                    <div>
-                        <h3 className="font-bold text-xl mb-1 text-main">설정 조절</h3>
-                        <p className="text-dim leading-relaxed">품질 슬라이더와 최대 크기(해상도)를 원하는 대로 조절합니다.</p>
-                    </div>
-                </li>
-                <li className="flex gap-6 items-start">
-                    <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-lg shadow-sm">3</span>
-                    <div>
-                        <h3 className="font-bold text-xl mb-1 text-main">변환 및 다운로드</h3>
-                        <p className="text-dim leading-relaxed">출력 형식을 선택하고 변환된 파일을 다운로드 받으세요.</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
+    <section className="info-section">
+        <h2 className="section-title">사용 방법</h2>
+        <ol className="guide-list">
+            <li>변환하려는 WebP 이미지 파일을 하나 또는 여러 개 선택합니다.</li>
+            <li>원하는 출력 형식(JPG 또는 PNG)을 선택합니다.</li>
+            <li>'변환하기' 버튼을 클릭합니다.</li>
+            <li>변환된 이미지를 개별적으로 다운로드하거나 '모두 다운로드' 버튼을 클릭하여 저장합니다.</li>
+        </ol>
     </section>
 );
