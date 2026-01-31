@@ -48,7 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         .layout-container {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 3rem;
           padding-bottom: 4rem;
         }
 
@@ -58,33 +58,40 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         }
 
         .main-header h1 {
-          font-size: clamp(2.5rem, 8vw, 3.5rem);
-          margin-bottom: 0.5rem;
-          line-height: 1.1;
+          font-size: clamp(2rem, 6vw, 3rem);
+          margin-bottom: 1rem;
+          line-height: 1.2;
+        }
+        
+        .main-header p {
+          font-size: 1.125rem;
         }
 
         .content-grid {
           display: block;
           width: 100%;
-          max-width: 900px;
-          margin: 0 auto;
+        }
+
+        .main-footer {
+          margin-top: 3rem;
+          padding: 2rem;
+          border-radius: 16px;
         }
 
         .ad-slot {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255,255,255,0.03);
-          border: 1px dashed var(--glass-border);
+          background: var(--bg-subtle);
+          border: 1px dashed var(--border-color);
+          border-radius: 12px;
           min-height: 90px;
           position: relative;
         }
 
         .ad-top {
           width: 100%;
-          min-height: 120px;
-          max-width: 900px;
-          margin: 0 auto;
+          min-height: 100px;
         }
 
         .ad-bottom {
@@ -93,7 +100,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         }
 
         .ad-label {
-          font-size: 0.7rem;
+          font-size: 0.75rem;
           color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.1em;
