@@ -47,7 +47,7 @@ export const GuideSection: React.FC = () => (
     <section className="py-16">
         <h2 className="text-3xl font-bold mb-12 title-gradient text-center">사용 방법 안내</h2>
         <div className="max-w-2xl mx-auto">
-            <ol className="relative border-l-2 border-gray-200 ml-4 space-y-10">
+            <ul className="relative border-l-2 border-gray-200 ml-4 space-y-10 list-none">
                 <li className="ml-8 relative">
                     <span className="absolute -left-11 flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-bold text-sm">1</span>
                     <h3 className="font-bold text-lg mb-2">이미지 업로드</h3>
@@ -63,7 +63,7 @@ export const GuideSection: React.FC = () => (
                     <h3 className="font-bold text-lg mb-2">변환 및 다운로드</h3>
                     <p className="text-dim">출력 형식을 선택하고 변환된 파일을 다운로드 받으세요.</p>
                 </li>
-            </ol>
+            </ul>
         </div>
     </section>
 );
