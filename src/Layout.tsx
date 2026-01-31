@@ -22,21 +22,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="main-content">
           {children}
         </div>
-
-        {/* 사이드바 광고 슬롯 */}
-        <aside className="ad-slot ad-sidebar glass">
-          <span className="ad-label">광고 영역</span>
-          {/* AdSense 코드가 여기에 들어갑니다 */}
-        </aside>
       </main>
 
       <footer className="main-footer glass p-6">
-        <div className="flex justify-between items-center gap-4">
-          <div className="footer-info">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="footer-info text-center md:text-left">
             <p className="text-sm font-semibold title-gradient">이미지 옵티마이저 프로</p>
             <p className="text-xs text-dim">© 2026. All rights reserved.</p>
           </div>
-          <nav className="footer-links flex gap-6 text-xs font-medium">
+          <nav className="footer-links flex flex-wrap justify-center gap-8 text-sm font-medium">
             <a href="/" className="hover:text-accent transition-colors">홈</a>
             <a href="/privacy" className="hover:text-accent transition-colors">개인정보처리방침</a>
             <a href="/terms" className="hover:text-accent transition-colors">이용약관</a>
@@ -60,7 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         .main-header {
           text-align: center;
-          margin-bottom: 1rem;
+          margin-bottom: 2rem;
         }
 
         .main-header h1 {
@@ -70,9 +64,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         }
 
         .content-grid {
-          display: grid;
-          grid-template-columns: 1fr 300px;
-          gap: 2rem;
+          display: block;
+          width: 100%;
+          max-width: 900px;
+          margin: 0 auto;
         }
 
         .ad-slot {
@@ -87,12 +82,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         .ad-top {
           width: 100%;
-          min-height: 100px;
-        }
-
-        .ad-sidebar {
-          width: 300px;
-          min-height: 600px;
+          min-height: 120px;
+          max-width: 900px;
+          margin: 0 auto;
         }
 
         .ad-bottom {
@@ -105,16 +97,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.1em;
-        }
-
-        @media (max-width: 1024px) {
-          .content-grid {
-            grid-template-columns: 1fr;
-          }
-          .ad-sidebar {
-            width: 100%;
-            min-height: 100px;
-          }
         }
       `}</style>
     </div>
