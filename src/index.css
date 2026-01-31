@@ -26,7 +26,7 @@ body {
   color: var(--text-main);
   min-height: 100vh;
   overflow-x: hidden;
-  line-height: 1.6;
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -35,12 +35,13 @@ h1,
 h2,
 h3,
 h4 {
-  line-height: 1.2;
-  margin-bottom: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
 }
 
-p {
-  margin-bottom: 1rem;
+p,
+li {
+  margin-bottom: 1.25rem;
 }
 
 .glass {
