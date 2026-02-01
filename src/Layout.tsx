@@ -12,7 +12,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                 <header className="main-header">
                     <h1 className="main-title">WebP JPG 변환</h1>
-                    <p className="main-subtitle">무료로 JPG 또는 PNG 이미지를 WebP로 변환하세요</p>
+                    <p className="main-subtitle">화질 저하 없이 빠르고 안전한 온라인 WebP 변환기</p>
                 </header>
 
                 <main className="flex-1 px-6 pb-12 w-full">
