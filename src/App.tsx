@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import Layout from './Layout';
 import { useImageOptimizer } from './utils/optimizer';
 import type { OptimizedImage } from './utils/optimizer';
-import { Download, Trash2, Image as ImageIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Download, Trash2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import JSZip from 'jszip';
 
