@@ -21,6 +21,7 @@ const App: React.FC = () => {
   const [quality, setQuality] = useState(80);
   const [maxSize, setMaxSize] = useState(1600);
   const [format, setFormat] = useState('jpg');
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -31,6 +32,8 @@ const App: React.FC = () => {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       processFiles(Array.from(e.dataTransfer.files));
     }
@@ -38,6 +41,19 @@ const App: React.FC = () => {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
   };
 
   const processFiles = (files: File[]) => {
@@ -127,9 +143,11 @@ const App: React.FC = () => {
     <Layout>
       <div className="tool-container">
         <div
-          className={`upload-box ${isProcessing ? 'processing' : ''}`}
+          className={`upload-box ${isProcessing ? 'processing' : ''} ${isDragging ? 'dragging' : ''}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
         >
           <label className="upload-label">
             <input type="file" multiple accept="image/webp,image/png,image/jpeg" onChange={handleFileUpload} hidden disabled={isProcessing} />
@@ -226,7 +244,8 @@ const App: React.FC = () => {
 
       <style>{`
                 .tool-container { background: #fff; margin-bottom: 4rem; }
-                .upload-box { background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 16px; padding: 3rem 1rem; text-align: center; cursor: pointer; position: relative; }
+                .upload-box { background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 16px; padding: 3rem 1rem; text-align: center; cursor: pointer; position: relative; transition: all 0.2s ease; }
+                .upload-box.dragging { background-color: #eef2ff; border-color: #6366f1; transform: scale(1.01); }
                 .upload-box.processing { pointer-events: none; opacity: 0.7; }
                 .cloud-icon { font-size: 3rem; margin-bottom: 1rem; }
                 .upload-text { font-weight: 700; color: #1e293b; }
