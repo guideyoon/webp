@@ -24,14 +24,28 @@ const App: React.FC = () => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files);
-      const newPending = files.map(file => ({
-        file,
-        preview: URL.createObjectURL(file)
-      }));
-      setPendingFiles(prev => [...prev, ...newPending]);
+      processFiles(Array.from(e.target.files));
       e.target.value = '';
     }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(Array.from(e.dataTransfer.files));
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const processFiles = (files: File[]) => {
+    const newPending = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    setPendingFiles(prev => [...prev, ...newPending]);
   };
 
   const startConversion = async () => {
@@ -62,6 +76,8 @@ const App: React.FC = () => {
   };
 
   const removeImage = (id: string) => {
+    const img = images.find(img => img.id === id);
+    if (img) URL.revokeObjectURL(img.dataUrl);
     setImages(images.filter(img => img.id !== id));
   };
 
@@ -75,14 +91,14 @@ const App: React.FC = () => {
     if (images.length === 0) return;
     const zip = new JSZip();
     images.forEach((img) => {
-      const data = img.dataUrl.split(',')[1];
-      zip.file(img.name, data, { base64: true });
+      zip.file(img.name, img.blob);
     });
     const content = await zip.generateAsync({ type: 'blob' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
-    link.download = 'converted_images.zip';
+    link.download = `optimized_images_${new Date().getTime()}.zip`;
     link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 100);
   };
 
   const downloadPair = (img: OptimizedImage) => {
@@ -110,7 +126,11 @@ const App: React.FC = () => {
   return (
     <Layout>
       <div className="tool-container">
-        <div className={`upload-box ${isProcessing ? 'processing' : ''}`}>
+        <div
+          className={`upload-box ${isProcessing ? 'processing' : ''}`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
           <label className="upload-label">
             <input type="file" multiple accept="image/webp,image/png,image/jpeg" onChange={handleFileUpload} hidden disabled={isProcessing} />
             <div className="upload-content">

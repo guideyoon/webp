@@ -29,19 +29,24 @@ export const useImageOptimizer = () => {
             const origDim = `${img.width}x${img.height}`;
 
             // 2. Optimization options
+            let fileType = 'image/webp';
+            if (options.format === 'jpg') fileType = 'image/jpeg';
+            else if (options.format === 'png') fileType = 'image/png';
+
             const compressionOptions = {
-                maxSizeMB: 1, // Placeholder, usually handled by quality
+                maxSizeMB: 1,
                 maxWidthOrHeight: options.maxWidthOrHeight || undefined,
                 useWebWorker: true,
                 initialQuality: options.quality / 100,
-                fileType: options.format === 'jpg' ? 'image/jpeg' : 'image/webp'
+                fileType: fileType
             };
 
             const compressedFile = await imageCompression(file, compressionOptions);
 
             // 3. Get new dimensions
             const compressedImg = new Image();
-            compressedImg.src = URL.createObjectURL(compressedFile);
+            const compressedUrl = URL.createObjectURL(compressedFile);
+            compressedImg.src = compressedUrl;
             await new Promise((resolve) => (compressedImg.onload = resolve));
             const newDim = `${compressedImg.width}x${compressedImg.height}`;
 
@@ -53,7 +58,7 @@ export const useImageOptimizer = () => {
                 newSize: compressedFile.size,
                 origDim,
                 newDim,
-                dataUrl: compressedImg.src,
+                dataUrl: compressedUrl,
                 blob: compressedFile
             };
         } catch (error) {
