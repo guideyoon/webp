@@ -19,7 +19,7 @@ const App: React.FC = () => {
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [quality, setQuality] = useState(80);
   const [maxSize, setMaxSize] = useState(1600);
-  const [format, setFormat] = useState('jpg');
+  const [format, setFormat] = useState('webp');
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
