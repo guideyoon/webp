@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebP JPG 변환 - 빠르고 쉬운 온라인 이미지 변환 도구</title>
+  <meta name="description"
+    content="무료 WebP JPG 변환 도구입니다. 프로그램을 설치하지 않고 브라우저에서 즉시 WebP 파일을 JPG 또는 PNG로 변환하세요. 100% 로컬 처리로 보안 걱정 없는 빠르고 안전한 변환이 가능합니다." />
+  <script>
+    (function () {
+      var ADSENSE_CLIENT = "ca-pub-9909131837306795";
+      var AD_SCRIPT_ID = "adsense-script";
+      var NO_ADS_STYLE_ID = "no-ads-style";
+      var MIN_TEXT_LENGTH = 1200;
+      var blockedRoutes = ["/privacy", "/terms"];
+      var adScriptLoaded = false;
+
+      function isBlockedRoute() {
+        return blockedRoutes.indexOf(window.location.pathname) !== -1;
+      }
+
+      function applyNoAdsStyle(block) {
+        var existing = document.getElementById(NO_ADS_STYLE_ID);
+        if (!block) {
+          if (existing) existing.remove();
+          return;
+        }
+
+        if (existing) return;
+        var style = document.createElement("style");
+        style.id = NO_ADS_STYLE_ID;
+        style.textContent = [
+          "ins.adsbygoogle { display:none !important; }",
+          "iframe[src*='googlesyndication'], iframe[id*='google_ads_iframe'] { display:none !important; }",
+          "div[id^='google_ads_iframe'], div[id*='google_ads_iframe'] { display:none !important; }"
+        ].join("\\n");
+        document.head.appendChild(style);
+      }
+
+      function hasValuablePublisherContent() {
+        if (isBlockedRoute()) return false;
+        var root = document.getElementById("root");
+        if (!root) return false;
+
+        var text = (root.innerText || "").replace(/\\s+/g, " ").trim();
+        var hasMainTool = root.querySelector(".tool-container, .upload-box") !== null;
+        var contentBlocks = root.querySelectorAll(".card, .feature-item, .legal-card, .policy-section").length;
+
+        return hasMainTool && text.length >= MIN_TEXT_LENGTH && contentBlocks >= 3;
+      }
+
+      function loadAdSenseScript() {
+        if (adScriptLoaded || document.getElementById(AD_SCRIPT_ID)) {
+          adScriptLoaded = true;
+          return;
+        }
+
+        var script = document.createElement("script");
+        script.id = AD_SCRIPT_ID;
+        script.async = true;
+        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + ADSENSE_CLIENT;
+        script.crossOrigin = "anonymous";
+        script.onload = function () { adScriptLoaded = true; };
+        document.head.appendChild(script);
+      }
+
+      function evaluateAdPolicyGuards() {
+        var blocked = isBlockedRoute();
+        applyNoAdsStyle(blocked);
+        if (!blocked && hasValuablePublisherContent()) {
+          loadAdSenseScript();
+        }
+      }
+
+      var originalPushState = history.pushState;
+      var originalReplaceState = history.replaceState;
+      history.pushState = function () {
+        var result = originalPushState.apply(this, arguments);
+        window.dispatchEvent(new Event("spa-route-change"));
+        return result;
+      };
+      history.replaceState = function () {
+        var result = originalReplaceState.apply(this, arguments);
+        window.dispatchEvent(new Event("spa-route-change"));
+        return result;
+      };
+
+      window.addEventListener("spa-route-change", function () {
+        setTimeout(evaluateAdPolicyGuards, 50);
+      });
+      window.addEventListener("popstate", function () {
+        setTimeout(evaluateAdPolicyGuards, 50);
+      });
+      window.addEventListener("load", function () {
+        evaluateAdPolicyGuards();
+        setTimeout(evaluateAdPolicyGuards, 700);
+        setTimeout(evaluateAdPolicyGuards, 1800);
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var root = document.getElementById("root");
+        if (!root) return;
+        var observer = new MutationObserver(function () {
+          evaluateAdPolicyGuards();
+        });
+        observer.observe(root, { childList: true, subtree: true, characterData: true });
+      });
+    })();
+  </script>
+  <style id="legal-mobile-layout">
+    @media (max-width: 768px) {
+      .legal-container,
+      .privacy-page {
+        max-width: 100%;
+        padding: 1.25rem 1rem 2rem;
+      }
+
+      .legal-header {
+        margin-bottom: 1.25rem;
+      }
+
+      .legal-title,
+      .page-title {
+        font-size: 1.5rem;
+        line-height: 1.35;
+      }
+
+      .legal-subtitle,
+      .last-updated {
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+
+      .legal-card,
+      .policy-section {
+        margin-bottom: 1rem;
+      }
+
+      .legal-card {
+        padding: 1rem;
+        border-radius: 14px;
+      }
+
+      .legal-section-title,
+      .policy-section h3 {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .legal-text,
+      .policy-section p {
+        font-size: 0.92rem;
+        line-height: 1.75;
+        word-break: keep-all;
+      }
+
+      .back-home-container {
+        margin-top: 1.25rem;
+      }
+
+      .btn-back-home,
+      .back-link {
+        display: inline-block;
+        padding: 0.7rem 0.95rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .legal-container,
+      .privacy-page {
+        padding: 1rem 0.8rem 1.75rem;
+      }
+
+      .legal-title,
+      .page-title {
+        font-size: 1.35rem;
+      }
+
+      .legal-card {
+        padding: 0.9rem;
+      }
+
+      .legal-text,
+      .policy-section p {
+        font-size: 0.88rem;
+        line-height: 1.7;
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-fXk3OaWB.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Cw5QQlj1.css">
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>
