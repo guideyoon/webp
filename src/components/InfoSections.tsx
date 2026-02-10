@@ -103,17 +103,34 @@ export const FAQSection: React.FC = () => (
             </details>
         </div>
         <style>{`
-          html {
-            scrollbar-gutter: stable;
+          .faq-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: clip;
+            overflow-anchor: none;
           }
 
-          .faq-wrap {
-            overflow-anchor: none;
+          .faq-item {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
           }
 
           .faq-item summary {
             list-style: none;
             gap: 12px;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            align-items: flex-start;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+          }
+
+          .faq-item summary > span {
+            flex: 0 0 auto;
+            margin-top: 2px;
           }
 
           .faq-item summary::-webkit-details-marker {
@@ -122,6 +139,10 @@ export const FAQSection: React.FC = () => (
 
           .faq-item p {
             animation: faqFadeIn 180ms ease-out;
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
           }
 
           @keyframes faqFadeIn {
@@ -135,9 +156,14 @@ export const FAQSection: React.FC = () => (
             }
           }
 
-          @supports not (scrollbar-gutter: stable) {
-            body {
-              overflow-y: scroll;
+          @media (max-width: 640px) {
+            .faq-item summary {
+              font-size: 0.95rem;
+            }
+
+            .faq-item p {
+              margin-top: 0.75rem;
+              padding-left: 0;
             }
           }
         `}</style>
