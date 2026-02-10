@@ -103,6 +103,18 @@ export const FAQSection: React.FC = () => (
             </details>
         </div>
         <style>{`
+          html,
+          body {
+            overflow-x: hidden;
+            scrollbar-gutter: stable both-edges;
+          }
+
+          @media (min-width: 768px) {
+            body {
+              overflow-y: scroll;
+            }
+          }
+
           .faq-wrap {
             width: 100%;
             max-width: 100%;
