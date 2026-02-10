@@ -83,11 +83,13 @@ const TermsOfService: React.FC = () => {
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--text-main);
+            line-height: 1.35;
           }
           .last-updated {
             color: var(--text-muted);
             font-size: 0.875rem;
             margin-bottom: 2rem;
+            line-height: 1.6;
           }
           .policy-section {
             margin-bottom: 2rem;
@@ -97,11 +99,49 @@ const TermsOfService: React.FC = () => {
             font-weight: 600;
             margin-bottom: 1rem;
             color: var(--text-main);
+            line-height: 1.5;
           }
           .policy-section p {
             line-height: 1.8;
             color: var(--text-muted);
             margin-bottom: 1rem;
+          }
+
+          @media (max-width: 768px) {
+            .privacy-page {
+              padding: 1.25rem 1rem 2rem;
+            }
+            .page-title {
+              font-size: 1.5rem;
+            }
+            .last-updated {
+              margin-bottom: 1.25rem;
+              font-size: 0.82rem;
+            }
+            .policy-section {
+              margin-bottom: 1rem;
+            }
+            .policy-section h3 {
+              font-size: 1rem;
+            }
+            .policy-section p {
+              font-size: 0.92rem;
+              line-height: 1.75;
+              word-break: keep-all;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .privacy-page {
+              padding: 1rem 0.8rem 1.75rem;
+            }
+            .page-title {
+              font-size: 1.35rem;
+            }
+            .policy-section p {
+              font-size: 0.88rem;
+              line-height: 1.7;
+            }
           }
         `}</style>
             </div>
