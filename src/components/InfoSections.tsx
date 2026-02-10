@@ -41,7 +41,7 @@ export const FeaturesSection: React.FC = () => (
 export const FAQSection: React.FC = () => (
     <section className="card p-12 section-animate">
         <h3 className="text-2xl font-bold mb-8">자주 묻는 질문 (FAQ)</h3>
-        <div className="flex flex-col">
+        <div className="flex flex-col faq-wrap">
             <details className="faq-item py-5 border-b border-slate-100 cursor-pointer group">
                 <summary className="font-semibold text-slate-800 outline-none flex justify-between items-center">
                     브라우저 기반 변환은 안전한가요?
@@ -54,15 +54,93 @@ export const FAQSection: React.FC = () => (
             </details>
             <details className="faq-item py-5 border-b border-slate-100 cursor-pointer group">
                 <summary className="font-semibold text-slate-800 outline-none flex justify-between items-center">
+                    WebP를 JPG로 변환하면 화질이 많이 떨어지나요?
+                    <span className="text-slate-300 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <p className="text-sm text-dim mt-4 pl-4 leading-loose">
+                    원본 해상도와 품질 옵션에 따라 달라집니다. 사진 콘텐츠는 JPG로 변환해도 용량 대비 품질이 안정적이며,
+                    텍스트/아이콘 중심 이미지는 PNG 또는 WebP를 유지하는 것이 더 선명할 수 있습니다.
+                </p>
+            </details>
+            <details className="faq-item py-5 border-b border-slate-100 cursor-pointer group">
+                <summary className="font-semibold text-slate-800 outline-none flex justify-between items-center">
+                    JPG, PNG, WebP 중 SEO에 유리한 형식은 무엇인가요?
+                    <span className="text-slate-300 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <p className="text-sm text-dim mt-4 pl-4 leading-loose">
+                    검색엔진은 파일 형식 자체보다 <strong>페이지 속도와 이미지 품질</strong>를 더 중요하게 봅니다.
+                    일반적으로 WebP가 용량 최적화에 유리하고, 필요 시 JPG/PNG로 목적에 맞게 변환하는 전략이 효율적입니다.
+                </p>
+            </details>
+            <details className="faq-item py-5 border-b border-slate-100 cursor-pointer group">
+                <summary className="font-semibold text-slate-800 outline-none flex justify-between items-center">
                     대량의 파일을 한 번에 처리할 수 있나요?
                     <span className="text-slate-300 group-open:rotate-180 transition-transform">▼</span>
                 </summary>
                 <p className="text-sm text-dim mt-4 pl-4 leading-loose">
-                    물론입니다. 여러 장의 이미지를 동시에 드래그하여 업로드하면 일괄적으로 변환이 진행되며,
-                    ZIP 파일 형태로 한 번에 다운로드할 수도 있습니다.
+                    가능합니다. 여러 장을 한 번에 업로드해 일괄 변환할 수 있고, 변환 결과는 ZIP으로 묶어 한 번에 다운로드할 수 있습니다.
+                </p>
+            </details>
+            <details className="faq-item py-5 border-b border-slate-100 cursor-pointer group">
+                <summary className="font-semibold text-slate-800 outline-none flex justify-between items-center">
+                    블로그/쇼핑몰용 이미지 권장 설정은 어떻게 되나요?
+                    <span className="text-slate-300 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <p className="text-sm text-dim mt-4 pl-4 leading-loose">
+                    보통 가로 1200~1600px, 품질 75~85 범위가 많이 사용됩니다. 상세페이지처럼 글자가 많은 이미지는 PNG,
+                    일반 제품/썸네일은 WebP 또는 JPG로 저장하면 품질과 용량 균형을 맞추기 쉽습니다.
+                </p>
+            </details>
+            <details className="faq-item py-5 border-b border-slate-100 cursor-pointer group">
+                <summary className="font-semibold text-slate-800 outline-none flex justify-between items-center">
+                    변환 후 파일명/원본 비율은 유지되나요?
+                    <span className="text-slate-300 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <p className="text-sm text-dim mt-4 pl-4 leading-loose">
+                    네. 기본적으로 원본 비율을 유지하며, 파일명도 원본 기준으로 저장됩니다. 필요하면 포맷과 최대 크기만 바꿔서
+                    플랫폼 요구사항에 맞게 빠르게 재생성할 수 있습니다.
                 </p>
             </details>
         </div>
+        <style>{`
+          html {
+            scrollbar-gutter: stable;
+          }
+
+          .faq-wrap {
+            overflow-anchor: none;
+          }
+
+          .faq-item summary {
+            list-style: none;
+            gap: 12px;
+          }
+
+          .faq-item summary::-webkit-details-marker {
+            display: none;
+          }
+
+          .faq-item p {
+            animation: faqFadeIn 180ms ease-out;
+          }
+
+          @keyframes faqFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-2px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @supports not (scrollbar-gutter: stable) {
+            body {
+              overflow-y: scroll;
+            }
+          }
+        `}</style>
     </section>
 );
 
