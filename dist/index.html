@@ -35,7 +35,7 @@
           "ins.adsbygoogle { display:none !important; }",
           "iframe[src*='googlesyndication'], iframe[id*='google_ads_iframe'] { display:none !important; }",
           "div[id^='google_ads_iframe'], div[id*='google_ads_iframe'] { display:none !important; }"
-        ].join("\\n");
+        ].join("\n");
         document.head.appendChild(style);
       }
 
@@ -44,7 +44,7 @@
         var root = document.getElementById("root");
         if (!root) return false;
 
-        var text = (root.innerText || "").replace(/\\s+/g, " ").trim();
+        var text = (root.innerText || "").replace(/\s+/g, " ").trim();
         var hasMainTool = root.querySelector(".tool-container, .upload-box") !== null;
         var contentBlocks = root.querySelectorAll(".card, .feature-item, .legal-card, .policy-section").length;
 
@@ -81,6 +81,7 @@
         window.dispatchEvent(new Event("spa-route-change"));
         return result;
       };
+
       history.replaceState = function () {
         var result = originalReplaceState.apply(this, arguments);
         window.dispatchEvent(new Event("spa-route-change"));
@@ -109,174 +110,12 @@
       });
     })();
   </script>
-  <style id="legal-mobile-layout">
-    @media (max-width: 768px) {
-      .legal-container,
-      .privacy-page {
-        max-width: 100%;
-        padding: 1.25rem 1rem 2rem;
-      }
-
-      .legal-header {
-        margin-bottom: 1.25rem;
-      }
-
-      .legal-title,
-      .page-title {
-        font-size: 1.5rem;
-        line-height: 1.35;
-      }
-
-      .legal-subtitle,
-      .last-updated {
-        font-size: 0.82rem;
-        line-height: 1.6;
-      }
-
-      .legal-card,
-      .policy-section {
-        margin-bottom: 1rem;
-      }
-
-      .legal-card {
-        padding: 1rem;
-        border-radius: 14px;
-      }
-
-      .legal-section-title,
-      .policy-section h3 {
-        font-size: 1rem;
-        line-height: 1.5;
-      }
-
-      .legal-text,
-      .policy-section p {
-        font-size: 0.92rem;
-        line-height: 1.75;
-        word-break: keep-all;
-      }
-
-      .back-home-container {
-        margin-top: 1.25rem;
-      }
-
-      .btn-back-home,
-      .back-link {
-        display: inline-block;
-        padding: 0.7rem 0.95rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .legal-container,
-      .privacy-page {
-        padding: 1rem 0.8rem 1.75rem;
-      }
-
-      .legal-title,
-      .page-title {
-        font-size: 1.35rem;
-      }
-
-      .legal-card {
-        padding: 0.9rem;
-      }
-
-      .legal-text,
-      .policy-section p {
-        font-size: 0.88rem;
-        line-height: 1.7;
-      }
-    }
-  </style>
-  <script type="module" crossorigin src="/assets/index-fXk3OaWB.js"></script>
+  <script type="module" crossorigin src="/assets/index-D97OD4G3.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-Cw5QQlj1.css">
-  <style id="legal-consistency-overrides">
-    .legal-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      color: var(--text-main);
-    }
-
-    .legal-title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: var(--text-main);
-      line-height: 1.35;
-    }
-
-    .legal-subtitle {
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-
-    .legal-card {
-      margin-bottom: 2rem;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      box-shadow: none;
-    }
-
-    .legal-section-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--text-main);
-      line-height: 1.5;
-      display: block;
-    }
-
-    .section-num {
-      display: none;
-    }
-
-    .legal-text {
-      line-height: 1.8;
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-      font-size: 1rem;
-    }
-
-    .back-home-container {
-      margin-top: 0.5rem;
-      text-align: left;
-    }
-
-    .btn-back-home {
-      display: inline-block;
-      background: transparent;
-      border: 0;
-      padding: 0;
-      color: var(--primary);
-      font-weight: 500;
-      text-decoration: none;
-      border-radius: 0;
-    }
-
-    .btn-back-home:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-      .legal-subtitle {
-        margin-bottom: 1.25rem;
-      }
-
-      .legal-card {
-        margin-bottom: 1.5rem;
-      }
-    }
-  </style>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root"></div>
 </body>
 
 </html>

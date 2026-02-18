@@ -28,10 +28,16 @@ export const useImageOptimizer = () => {
             await new Promise((resolve) => (img.onload = resolve));
             const origDim = `${img.width}x${img.height}`;
 
-            // 2. Optimization options
+            // 2. Optimization options & determine target extension
             let fileType = 'image/webp';
-            if (options.format === 'jpg') fileType = 'image/jpeg';
-            else if (options.format === 'png') fileType = 'image/png';
+            let targetExt = '.webp';
+            if (options.format === 'jpg') {
+                fileType = 'image/jpeg';
+                targetExt = '.jpg';
+            } else if (options.format === 'png') {
+                fileType = 'image/png';
+                targetExt = '.png';
+            }
 
             const compressionOptions = {
                 maxSizeMB: 1,
@@ -43,7 +49,11 @@ export const useImageOptimizer = () => {
 
             const compressedFile = await imageCompression(file, compressionOptions);
 
-            // 3. Get new dimensions
+            // 3. Replace the file extension to match chosen format
+            const baseName = file.name.replace(/\.[^.]+$/, '');
+            const outputName = baseName + targetExt;
+
+            // 4. Get new dimensions
             const compressedImg = new Image();
             const compressedUrl = URL.createObjectURL(compressedFile);
             compressedImg.src = compressedUrl;
@@ -53,7 +63,7 @@ export const useImageOptimizer = () => {
             return {
                 id: Math.random().toString(36).substr(2, 9),
                 file: file,
-                name: compressedFile.name,
+                name: outputName,
                 origSize: file.size,
                 newSize: compressedFile.size,
                 origDim,
